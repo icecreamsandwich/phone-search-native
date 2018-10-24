@@ -17,12 +17,13 @@ import {
   Picker
 } from 'react-native';
 import { FormLabel, FormInput, FormValidationMessage, Slider } from 'react-native-elements';
+
 export default class HomeScreen extends Component {
   constructor(props){
     super(props);
     this.state = {
-      brandName: ""
-      priceRange: []
+      brandName: "",
+      priceRange: 200,
       brand: "",
       showBrand:false,
       isLoading:true
@@ -37,32 +38,47 @@ export default class HomeScreen extends Component {
 }
 
 //call the API to fetch Data
-  componentdidMount(){
+componentdidMount(){
     fetch('http://localhost/gsmarena-API/api/?action=brands')
       .then(response => response.json())
-      .then(data => this.setState({ brands:data }));
+      .then(res => this.setState({ brands:res.data }));
       this.setState({isLoading:false})
-  }
-
-  handleInputChange(event) {
-       this.setState({ [event.target.name]: event.target.value});
   }
 
   handleButtonPress() {
          //log all form data
          alert(this.state.brand+"=="+this.state.priceRange);
-         var nPriceMin = priceRange[0];
-         var nPriceMax = priceRange[1];
+         var nPriceMin = 0;
+         var nPriceMax = this.state.priceRange;
          return false;
          //fetch request to get filtered data
          fetch('http://localhost/gsmarena-API/api/?action=brands&sMakers='+brand+'&nPriceMin='+nPriceMin+'&nPriceMax='+nPriceMax)
            .then(response => response.json())
-           .then(data => this.setState({ filteredBrands:data }));
-        this.setState({showBrand:true})
+           .then(res => this.setState({ 
+             filteredBrands:res.data ,
+             showBrand:true
+            }));
+       // this.setState({showBrand:true})
   }
 
   goToDetailsScreen(item){
     this.props.navigation.navigate('DetailScreen',{Details:item});
+  }
+
+  renderPickerItems(){
+    if(this.state.brands.length > 0){
+      this.state.brands.map(function(brand,i){
+        var brandName = brand.title;
+        var brandHref = brand.href;
+        let result = brandHref.match(/\d+/g).map(n => parseInt(n));
+        var brandId = result[0];
+        return (
+          <Picker.Item style={{fontFamily: 'SourceSansPro-Regular'}} 
+          label="{brandName}" 
+          value="{brandId}" key={i} />
+        );
+      });
+    }
   }
 
   _renderItem = ({ item }) => {
@@ -93,33 +109,47 @@ export default class HomeScreen extends Component {
 
     return (
       <View style={styles.container}>
-
-        <Picker selectedValue = {} onValueChange = {(brand) => this.setState({brandId})}>
-          { this.state.brands.map(function(brand,i){
+        <Picker selectedValue = {this.state.brand}
+        mode="dropdown" 
+        onValueChange = {(brandId) => this.setState({brand:brandId})}>
+        {this.renderPickerItems()}
+          {/* {this.state.brands.map(function(brand,i){
+            var brandName = brand.title;
             var brandHref = brand.href;
-            var brandId = parseInt(brandHref, 10);
-
+            let result = brandHref.match(/\d+/g).map(n => parseInt(n));
+            var brandId = result[0];
             return (
-              <Picker.Item label="{brand}" value="{brandId}" key={i} />
+              <Picker.Item style={{fontFamily: 'SourceSansPro-Regular'}} 
+              label="{brandName}" 
+              value="{brandId}" key={i} />
             );
-          }, this)}
-
+          }, this)
+          } */}
         </Picker>
 
         <Slider
-          value={this.state.value}
+          value={this.state.priceRange}
           minimumValue={0}
           maximumValues={400}
-          onValueChange={(priceRange) => this.setState({priceRange})} />
-
+          onValueChange={e => {
+        this.setState(() => {
+          return { priceRange: e }
+        })
+      }}
+      onSlidingComplete={e => {
+        this.setState(() => {
+          return { priceRange: e }
+        })
+      }} 
+      />
+        <Text>{this.state.priceRange}</Text>
         <Button
           raised
           icon={{name: 'check'}}
           title='SUBMIT'
           onPress={() => this.handleButtonPress()} />
 
-        {if(this.state.showBrand){
-          <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+        {this.state.showBrand == true ? <ScrollView contentContainerStyle={{flexGrow: 1}}>
             <View style={styles.getStartedContainer}>
               <Text style={styles.getStartedText}> Brands </Text>
             </View>
@@ -130,8 +160,8 @@ export default class HomeScreen extends Component {
               renderItem={this._renderItem}
               ItemSeparatorComponent={this._ItemSeparator}
             />
-          </ScrollView>
-        }}
+          </ScrollView>: null
+        }
 
       </View>
     );

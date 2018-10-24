@@ -5,11 +5,10 @@ import { ScrollView, View, Text, Image, StyleSheet } from 'react-native';
 import Swiper from 'react-native-swiper';
 import randomcolor from 'randomcolor';
 
-export default class EmployeeDetails extends React.Component {
+export default class DetailScreen extends React.Component {
 
   constructor(props){
     super(props);
-    filteredEmployee = [];
   }
 
   viewStyle() {
@@ -23,18 +22,19 @@ export default class EmployeeDetails extends React.Component {
 
   render() {
     const { navigation } = this.props;
-    var employeeDetails = [];
-    employeeDetails = navigation.getParam('employeeDetails', 'NO-ID');
+    var phoneDetails = [];
+    phoneDetails = navigation.getParam('Details', 'NO-ID');
+
     return (
       <Swiper
         loop={false}
         showsPagination={false}
         index={0}>
         <View style={this.viewStyle()}>
-          <EmployeeD label="Right"  employeeDetails={employeeDetails} />
+          <PhoneD label="Right"  phoneDetails={phoneDetails} />
         </View>
         <View style={this.viewStyle()}>
-          <EmployeeS label="Left" employeeDetails={employeeDetails}/>
+          <PhoneS label="Left" phoneDetails={phoneDetails}/>
         </View>
 
       </Swiper>
@@ -42,7 +42,7 @@ export default class EmployeeDetails extends React.Component {
   }
 }
 
-class EmployeeD extends React.Component {
+class PhoneD extends React.Component {
   render() {
     return (
       <ScrollView
@@ -52,20 +52,20 @@ class EmployeeD extends React.Component {
         <View style={styles.author}>
           <Image
             style={styles.avatar}
-            source={require('../images/avatar-1.png')}
+            source={this.props.phoneDetails.image}
           />
           <View style={styles.meta}>
-            <Text style={styles.name}>{this.props.employeeDetails.name}</Text>
-            <Text style={styles.timestamp}>1st Jan 2025</Text>
+            <Text style={styles.name}>{this.props.phoneDetails.title}</Text>
+            <Text style={styles.timestamp}>{this.props.phoneDetails.count}</Text>
           </View>
         </View>
-        <Text style={styles.title}>Employee Details</Text>
+        <Text style={styles.title}>Phone Details</Text>
         <Text style={styles.paragraph}>
           Contrary to popular belief, Lorem Ipsum is not simply random text. It
           has roots in a piece of classical Latin literature from 45 BC, making
           it over 2000 years old.
         </Text>
-        <Image style={styles.image} source={require('../images/book.jpg')} />
+        <Image style={styles.image} source={this.props.phoneDetails.image} />
         <Text style={styles.paragraph}>
           Richard McClintock, a Latin professor at Hampden-Sydney College in
           Virginia, looked up one of the more obscure Latin words, consectetur,
@@ -79,18 +79,13 @@ class EmployeeD extends React.Component {
           popular during the Renaissance. The first line of Lorem Ipsum, "Lorem
           ipsum dolor sit amet..", comes from a line in section 1.10.32.
         </Text>
-        <Text style={styles.paragraph}>Address : {this.props.employeeDetails.address}</Text>
-        <Text style={styles.paragraph}>Email : {this.props.employeeDetails.email}</Text>
-        <Text style={styles.paragraph}>D.O.B : {this.props.employeeDetails.dob}</Text>
-        <Text style={styles.paragraph}>Doj : {this.props.employeeDetails.doj}</Text>
-
       </ScrollView>
     )
   }
 }
 
 
-class EmployeeS extends React.Component {
+class PhoneS extends React.Component {
   render() {
     return (
       <ScrollView
@@ -100,20 +95,20 @@ class EmployeeS extends React.Component {
         <View style={styles.author}>
           <Image
             style={styles.avatar}
-            source={require('../images/avatar-1.png')}
+            source={this.props.phoneDetails.image}
           />
           <View style={styles.meta}>
-            <Text style={styles.name}>{this.props.employeeDetails.name}</Text>
-            <Text style={styles.timestamp}>1st Jan 2025</Text>
+            <Text style={styles.name}>{this.props.phoneDetails.title}</Text>
+            <Text style={styles.timestamp}>{this.props.phoneDetails.count}</Text>
           </View>
         </View>
-        <Text style={styles.title}>Employee Skills</Text>
+        <Text style={styles.title}>Advanced Details</Text>
         <Text style={styles.paragraph}>
           Contrary to popular belief, Lorem Ipsum is not simply random text. It
           has roots in a piece of classical Latin literature from 45 BC, making
           it over 2000 years old.
         </Text>
-        <Image style={styles.image} source={require('../images/book.jpg')} />
+        <Image style={styles.image} source={this.props.phoneDetails.image} />
         <Text style={styles.paragraph}>
           Richard McClintock, a Latin professor at Hampden-Sydney College in
           Virginia, looked up one of the more obscure Latin words, consectetur,
@@ -127,7 +122,6 @@ class EmployeeS extends React.Component {
           popular during the Renaissance. The first line of Lorem Ipsum, "Lorem
           ipsum dolor sit amet..", comes from a line in section 1.10.32.
         </Text>
-        <Text style={styles.paragraph}>Skills : {this.props.employeeDetails.Skills}</Text>
       </ScrollView>
     )
   }
