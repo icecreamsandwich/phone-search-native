@@ -50,8 +50,9 @@ componentdidMount(){
          alert(this.state.brand+"=="+this.state.priceRange);
          var nPriceMin = 0;
          var nPriceMax = this.state.priceRange;
+         var brand = this.state.brand;
          return false;
-         //fetch request to get filtered data
+         //fetch request to get filtered data , TODO //call the slug api instead
          fetch('http://localhost/gsmarena-API/api/?action=brands&sMakers='+brand+'&nPriceMin='+nPriceMin+'&nPriceMax='+nPriceMax)
            .then(response => response.json())
            .then(res => this.setState({ 
@@ -62,16 +63,22 @@ componentdidMount(){
   }
 
   goToDetailsScreen(item){
-    this.props.navigation.navigate('DetailScreen',{Details:item});
+    var itemSlug = item.href;
+    fetch('http://localhost/gsmarena-API/api/?slug='+itemSlug)
+           .then(response => response.json())
+           .then(res => this.setState({ 
+             advDetails:res.data ,
+    }));
+    this.props.navigation.navigate('DetailScreen',{Details:this.state.advDetails});
   }
 
   renderPickerItems(){
     if(this.state.brands.length > 0){
       this.state.brands.map(function(brand,i){
         var brandName = brand.title;
-        var brandHref = brand.href;
-        let result = brandHref.match(/\d+/g).map(n => parseInt(n));
-        var brandId = result[0];
+        var brandSlug = brand.href;
+        var brandId = brandSlug.split("-")[1];
+
         return (
           <Picker.Item style={{fontFamily: 'SourceSansPro-Regular'}} 
           label="{brandName}" 
@@ -109,9 +116,11 @@ componentdidMount(){
 
     return (
       <View style={styles.container}>
-        <Picker selectedValue = {this.state.brand}
+        <Picker selectedValue={this.state.brand}
         mode="dropdown" 
-        onValueChange = {(brandId) => this.setState({brand:brandId})}>
+        onValueChange = {(brandId) => this.setState({
+          brand:brandId
+          })}>
         {this.renderPickerItems()}
           {/* {this.state.brands.map(function(brand,i){
             var brandName = brand.title;

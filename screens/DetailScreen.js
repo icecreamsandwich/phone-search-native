@@ -19,12 +19,11 @@ export default class DetailScreen extends React.Component {
       alignItems: 'center',
     }
   }
-
+  
   render() {
     const { navigation } = this.props;
     var phoneDetails = [];
     phoneDetails = navigation.getParam('Details', 'NO-ID');
-
     return (
       <Swiper
         loop={false}
