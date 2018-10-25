@@ -14,9 +14,9 @@ import {
   TouchableNativeFeedback,
   View,
   FlatList,
-  Picker
+  Picker,
+  Slider
 } from 'react-native';
-import { FormLabel, FormInput, FormValidationMessage, Slider } from 'react-native-elements';
 
 export default class HomeScreen extends Component {
   constructor(props){
@@ -26,7 +26,8 @@ export default class HomeScreen extends Component {
       priceRange: 200,
       brand: "",
       showBrand:false,
-      isLoading:true
+      isLoading:true,
+      brands: []
     };
   }
 
@@ -41,8 +42,16 @@ export default class HomeScreen extends Component {
 componentdidMount(){
     fetch('http://localhost/gsmarena-API/api/?action=brands')
       .then(response => response.json())
-      .then(res => this.setState({ brands:res.data }));
-      this.setState({isLoading:false})
+      .then(responseJson => {
+        console.log(responseJson);
+        this.setState({ 
+          brands:responseJson.data,
+          isLoading:false
+        });
+     })
+     .catch((error) => {
+      console.error(error);
+    });      
   }
 
   handleButtonPress() {
@@ -106,13 +115,13 @@ componentdidMount(){
   _ItemSeparator = () => <View style={styles.separator}></View>;
 
   render() {
-    if(this.state.isLoading){
+   /*  if(this.state.isLoading){
       return(
         <View style={{flex: 1, padding: 20}}>
           <ActivityIndicator/>
         </View>
       )
-    }
+    } */
 
     return (
       <View style={styles.container}>
@@ -141,16 +150,16 @@ componentdidMount(){
           minimumValue={0}
           maximumValues={400}
           onValueChange={e => {
-        this.setState(() => {
-          return { priceRange: e }
-        })
-      }}
-      onSlidingComplete={e => {
-        this.setState(() => {
-          return { priceRange: e }
-        })
-      }} 
-      />
+            this.setState(() => {
+              return { priceRange: e }
+            })
+          }}
+        onSlidingComplete={e => {
+          this.setState(() => {
+            return { priceRange: e }
+          })
+        }} 
+        />
         <Text>{this.state.priceRange}</Text>
         <Button
           raised

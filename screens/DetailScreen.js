@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { ScrollView, View, Text, Image, StyleSheet } from 'react-native';
 import Swiper from 'react-native-swiper';
-import randomcolor from 'randomcolor';
 
 export default class DetailScreen extends React.Component {
 
@@ -14,7 +13,7 @@ export default class DetailScreen extends React.Component {
   viewStyle() {
     return {
       flex: 1,
-      backgroundColor: randomcolor(),
+      backgroundColor: "Green",
       justifyContent: 'center',
       alignItems: 'center',
     }
